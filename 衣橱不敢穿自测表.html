@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>衣橱不敢穿清单 · 自测表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --ink: #1A0F2E;
+    --deep: #4A2068;
+    --mid: #7B4FA0;
+    --soft: #C9A8E0;
+    --pale: #EEE6F5;
+    --bg: #F7F2FC;
+    --text: #2A1840;
+    --text-sub: #7A6888;
+    --text-hint: #B0A0C0;
+    --white: #FFFFFF;
+    --shadow: 0 2px 20px rgba(74, 32, 104, 0.08);
+    --shadow-hover: 0 4px 28px rgba(74, 32, 104, 0.14);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Noto Sans SC', 'Source Han Sans SC', 'PingFang SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--deep);
+    padding: 56px 32px 48px;
+    text-align: center;
+    position: relative;
+  }
+
+  .header-line {
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: rgba(255,255,255,0.4);
+    margin: 0 auto 20px;
+    border-radius: 1px;
+  }
+
+  .header-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 300;
+    line-height: 1.8;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  /* ===== PROGRESS ===== */
+  .progress-wrap {
+    background: var(--white);
+    padding: 14px 24px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--pale);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+  }
+
+  .progress-info span {
+    font-size: 12px;
+    color: var(--text-hint);
+    font-weight: 400;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--pale);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--mid);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+  }
+
+  /* ===== MAIN ===== */
+  .main {
+    padding: 28px 20px 120px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .intro {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.8;
+    text-align: center;
+    margin-bottom: 28px;
+    padding: 0 8px;
+  }
+
+  /* ===== ZONE ===== */
+  .zone {
+    background: var(--white);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .zone-head {
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .zone-letter {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0;
+    flex-shrink: 0;
+  }
+
+  .zone-a .zone-letter { background: #8B5EA7; }
+  .zone-b .zone-letter { background: #7B4FA0; }
+  .zone-c .zone-letter { background: #9B6AB0; }
+  .zone-d .zone-letter { background: #6A4590; }
+
+  .zone-meta {}
+  .zone-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-sub);
+  }
+  .zone-count {
+    font-size: 12px;
+    color: var(--text-hint);
+    margin-top: 3px;
+  }
+
+  .zone-body {
+    padding: 0 16px 18px;
+  }
+
+  /* ===== ITEM ===== */
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    border: 1px solid transparent;
+    margin-bottom: 6px;
+    background: #FAF8FD;
+  }
+
+  .item:last-child { margin-bottom: 0; }
+
+  .item:active { transform: scale(0.99); }
+
+  .item.is-checked {
+    background: #F3EBF8;
+    border-color: var(--soft);
+  }
+
+  .dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--soft);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: var(--white);
+  }
+
+  .item.is-checked .dot {
+    background: var(--deep);
+    border-color: var(--deep);
+  }
+
+  .dot-inner {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .item.is-checked .dot-inner {
+    opacity: 1;
+  }
+
+  .item-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    flex: 1;
+    padding-top: 1px;
+  }
+
+  .item.is-checked .item-text {
+    color: var(--deep);
+    font-weight: 500;
+  }
+
+  /* ===== CTA ===== */
+  .cta-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 24px max(20px, env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+    z-index: 100;
+    text-align: center;
+  }
+
+  .cta-btn {
+    width: 100%;
+    max-width: 400px;
+    padding: 16px 24px;
+    background: var(--deep);
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    letter-spacing: 0.03em;
+    transition: background 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 4px 20px rgba(74, 32, 104, 0.3);
+  }
+
+  .cta-btn:active {
+    transform: scale(0.98);
+    background: #3A1858;
+  }
+
+  /* ===== RESULT PAGE ===== */
+  #result-page { display: none; }
+
+  .result-header {
+    padding: 52px 24px 40px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+  }
+
+  .result-type-a .result-header { background: linear-gradient(160deg, #7B4FA0, #5A3878); }
+  .result-type-b .result-header { background: linear-gradient(160deg, #6A4590, #4A2568); }
+  .result-type-c .result-header { background: linear-gradient(160deg, #8B5EA7, #5A3878); }
+  .result-type-d .result-header { background: linear-gradient(160deg, #5A3880, #3A1858); }
+  .result-type-mix .result-header { background: linear-gradient(160deg, #6A4590, #3A1858); }
+
+  .result-glyph {
+    font-size: 48px;
+    margin-bottom: 14px;
+    display: block;
+    opacity: 0.9;
+  }
+
+  .result-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .result-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    line-height: 1.3;
+  }
+
+  /* Score bar */
+  .score-bars {
+    display: flex;
+    gap: 5px;
+    margin-top: 24px;
+    justify-content: center;
+  }
+
+  .score-col {
+    text-align: center;
+    flex: 1;
+    max-width: 56px;
+  }
+
+  .score-col-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-bottom: 6px;
+  }
+
+  .score-col-track {
+    height: 4px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+
+  .score-col-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 2px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+    width: 0;
+  }
+
+  .score-col-num {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* Result body */
+  .result-body {
+    padding: 24px 20px 40px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .result-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 24px 20px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+
+  .result-card p {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .result-card p:last-child { margin-bottom: 0; }
+
+  .result-card strong {
+    color: var(--deep);
+    font-weight: 600;
+  }
+
+  .insight {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--deep);
+    line-height: 1.65;
+    background: #F3EBF8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 6px 0;
+    display: block;
+  }
+
+  .dialogue {
+    font-size: 13px;
+    color: var(--text-sub);
+    background: #FAF8FD;
+    border-left: 2px solid var(--soft);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 10px 0;
+    line-height: 1.85;
+  }
+
+  /* Action box */
+  .action-box {
+    background: #F3EBF8;
+    border-radius: 14px;
+    padding: 20px 18px;
+    margin-top: 4px;
+  }
+
+  .action-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--mid);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .action-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .action-step:last-child { margin-bottom: 0; }
+
+  .action-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--deep);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .action-desc {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.75;
+    flex: 1;
+  }
+
+  /* Chips */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 14px;
+  }
+
+  .chip {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .chip-a { background: #8B5EA7; }
+  .chip-b { background: #7B4FA0; }
+  .chip-c { background: #9B6AB0; }
+  .chip-d { background: #6A4590; }
+
+  /* Closing */
+  .closing {
+    background: linear-gradient(135deg, #F3EBF8, #EDE6F5);
+    border-radius: 14px;
+    padding: 24px 20px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .closing-glyph {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .closing p {
+    font-size: 13px;
+    color: var(--text-sub);
+    line-height: 1.9;
+    margin-bottom: 8px;
+  }
+
+  .closing p:last-child { margin-bottom: 0; }
+
+  .closing strong {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--deep);
+    display: block;
+    margin: 4px 0;
+  }
+
+  .retry-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: var(--white);
+    border: 1.5px solid var(--soft);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--deep);
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
+    transition: all 0.15s ease;
+  }
+
+  .retry-btn:active {
+    background: #F3EBF8;
+    transform: scale(0.99);
+  }
+
+  .section-label {
+    font-size: 11px;
+    color: var(--text-hint);
+    text-align: center;
+    margin: 22px 0 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Animations */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .rise { animation: rise 0.4s ease forwards; }
+  .rise-1 { animation-delay: 0.05s; opacity: 0; }
+  .rise-2 { animation-delay: 0.12s; opacity: 0; }
+  .rise-3 { animation-delay: 0.19s; opacity: 0; }
+  .rise-4 { animation-delay: 0.26s; opacity: 0; }
+  .rise-5 { animation-delay: 0.33s; opacity: 0; }
+</style>
+</head>
+<body>
+
+<!-- ===== QUIZ ===== -->
+<div id="quiz-page">
+
+  <div class="header">
+    <span class="header-line"></span>
+    <div class="header-title">衣橱不敢穿清单</div>
+    <div class="header-sub">你的衣橱里藏着哪些"不敢"？<br>选择符合你的描述，即可获得专属分析</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span id="pct-label">0%</span>
+      <span id="count-label">已选 0 / 16</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="intro">以下每一条都是真实的心声。选择与你产生共鸣的选项，多选不限。</div>
+
+    <!-- A -->
+    <div class="zone zone-a">
+      <div class="zone-head">
+        <div class="zone-letter">A</div>
+        <div class="zone-meta">
+          <div class="zone-name">关于被他人评价</div>
+          <div class="zone-count" id="cnt-a">已选 0 / 4</div>
+        </div>
+      </div>
+      <div class="zone-body">
+        <div class="item" data-zone="a" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">我有一件衣服很喜欢，但怕穿出去被人说"太夸张"</div>
+        </div>
+        <div class="item" data-zone="a" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">穿衣服时，经常会想"别人会怎么看我"</div>
+        </div>
+        <div class="item" data-zone="a" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">曾因穿某件衣服被否定过（家人 / 朋友 / 同事）</div>
+        </div>
+        <div class="item" data-zone="a" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">很少穿亮色或图案，因为不想被注意</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="zone zone-b">
+      <div class="zone-head">
+        <div class="zone-letter">B</div>
+        <div class="zone-meta">
+          <div class="zone-name">关于风格与自我认知</div>
+          <div class="zone-count" id="cnt-b">已选 0 / 4</div>
+        </div>
+      </div>
+      <div class="zone-body">
+        <div class="item" data-zone="b" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">经常跟风买网红同款，穿几次就不喜欢了</div>
+        </div>
+        <div class="item" data-zone="b" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">衣柜风格很混乱，不知道哪一种才是"我"</div>
+        </div>
+        <div class="item" data-zone="b" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">很难说清楚自己到底喜欢什么样的衣服</div>
+        </div>
+        <div class="item" data-zone="b" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">买衣服时经常犹豫，最后买最安全的那件</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="zone zone-c">
+      <div class="zone-head">
+        <div class="zone-letter">C</div>
+        <div class="zone-meta">
+          <div class="zone-name">关于配得感</div>
+          <div class="zone-count" id="cnt-c">已选 0 / 4</div>
+        </div>
+      </div>
+      <div class="zone-body">
+        <div class="item" data-zone="c" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">有很多吊牌没拆的衣服，等"瘦了再穿"</div>
+        </div>
+        <div class="item" data-zone="c" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">觉得自己现在"还不够好"，配不上好看的衣服</div>
+        </div>
+        <div class="item" data-zone="c" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">不太舍得给自己买贵的衣服</div>
+        </div>
+        <div class="item" data-zone="c" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">总觉得"等我变好了，再开始穿好看"</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- D -->
+    <div class="zone zone-d">
+      <div class="zone-head">
+        <div class="zone-letter">D</div>
+        <div class="zone-meta">
+          <div class="zone-name">关于审美能力</div>
+          <div class="zone-count" id="cnt-d">已选 0 / 4</div>
+        </div>
+      </div>
+      <div class="zone-body">
+        <div class="item" data-zone="d" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">买了衣服回家发现不会搭配</div>
+        </div>
+        <div class="item" data-zone="d" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">对色彩、版型、面料没什么概念</div>
+        </div>
+        <div class="item" data-zone="d" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">审美主要靠看博主学，自己还是不会判断</div>
+        </div>
+        <div class="item" data-zone="d" onclick="tap(this)">
+          <div class="dot"><div class="dot-inner"></div></div>
+          <div class="item-text">小时候几乎没有机会学怎么穿好看</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <div class="cta-area">
+    <button class="cta-btn" onclick="showResult()">查看我的测评结果</button>
+  </div>
+
+</div><!-- /quiz-page -->
+
+
+<!-- ===== RESULT ===== -->
+<div id="result-page"></div>
+
+
+<script>
+  var S = { a: 0, b: 0, c: 0, d: 0 };
+  var T = 0;
+
+  function tap(el) {
+    el.classList.toggle('is-checked');
+    var z = el.getAttribute('data-zone');
+    var on = el.classList.contains('is-checked');
+    S[z] += on ? 1 : -1;
+    T += on ? 1 : -1;
+    document.getElementById('cnt-' + z).textContent = '已选 ' + S[z] + ' / 4';
+    document.getElementById('count-label').textContent = '已选 ' + T + ' / 16';
+    document.getElementById('pct-label').textContent = Math.round((T / 16) * 100) + '%';
+    document.getElementById('progress-fill').style.width = (T / 16 * 100) + '%';
+  }
+
+  function showResult() {
+    var a = S.a, b = S.b, c = S.c, d = S.d;
+    var total = a + b + c + d;
+    var mx = Math.max(a, b, c, d);
+    var dom = [];
+    if (a === mx && a > 0) dom.push('a');
+    if (b === mx && b > 0) dom.push('b');
+    if (c === mx && c > 0) dom.push('c');
+    if (d === mx && d > 0) dom.push('d');
+
+    var html = total === 0
+      ? buildEmpty()
+      : dom.length === 1
+        ? buildSingle(dom[0], a, b, c, d)
+        : buildMix(dom, a, b, c, d);
+
+    document.getElementById('result-page').innerHTML = html;
+    document.getElementById('result-page').style.display = 'block';
+    document.getElementById('quiz-page').style.display = 'none';
+    window.scrollTo(0, 0);
+
+    // Animate score bars
+    setTimeout(function() {
+      var fills = document.querySelectorAll('.score-col-fill');
+      fills.forEach(function(f) { f.style.width = f.getAttribute('data-w') + '%'; });
+    }, 100);
+  }
+
+  function retry() {
+    S = { a: 0, b: 0, c: 0, d: 0 }; T = 0;
+    document.querySelectorAll('.item').forEach(function(el) { el.classList.remove('is-checked'); });
+    ['a','b','c','d'].forEach(function(z) {
+      document.getElementById('cnt-' + z).textContent = '已选 0 / 4';
+    });
+    document.getElementById('count-label').textContent = '已选 0 / 16';
+    document.getElementById('pct-label').textContent = '0%';
+    document.getElementById('progress-fill').style.width = '0%';
+    document.getElementById('result-page').style.display = 'none';
+    document.getElementById('quiz-page').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function bars(a, b, c, d) {
+    var mx = Math.max(a, b, c, d, 1);
+    function col(l, v) {
+      return '<div class="score-col">' +
+        '<div class="score-col-label">' + l + '</div>' +
+        '<div class="score-col-track">' +
+          '<div class="score-col-fill" data-w="' + Math.round(v / mx * 100) + '"></div>' +
+        '</div>' +
+        '<div class="score-col-num">' + v + '</div>' +
+      '</div>';
+    }
+    return '<div class="score-bars">' + col('A', a) + col('B', b) + col('C', c) + col('D', d) + '</div>';
+  }
+
+  function closing() {
+    return '<div class="closing rise rise-5">' +
+      '<span class="closing-glyph">🌸</span>' +
+      '<p>不管你是哪一种——或哪几种的混合——</p>' +
+      '<strong>都不是你的错。</strong>' +
+      '<p>这是审美训练缺失、青春期表达窗口被关闭、环境断层，共同造成的结果。</p>' +
+      '<p style="color:#7B4FA0;font-weight:500;">我想做的是：陪你，慢慢走出来。</p>' +
+    '</div>' +
+    '<button class="retry-btn" onclick="retry()">重新测一次</button>';
+  }
+
+  var R = {
+    a: {
+      glyph: '👁', tag: '类型一 · A区最多', title: '害怕被评价型',
+      cls: 'result-type-a',
+      cards: [
+        { html: '<span class="insight">你不是不会穿，你是不敢被看见。</span>' +
+          '<p>你心里其实知道什么样好看。逛街的时候，一眼就能挑出那件有设计感的上衣、那条颜色很特别的裙子。</p>' +
+          '<p>但你的手，会不由自主地伸向旁边的黑色、白色、灰色。</p>' +
+          '<div class="dialogue">"这件会不会太夸张了？"<br>"别人会不会觉得我在装？"<br>"同事会不会在背后议论我？"</div>'
+        },
+        { html: '<p><strong>这个声音从哪来的？</strong></p>' +
+          '<p>很多时候，不是现在。是小时候——</p>' +
+          '<div class="dialogue">"不要臭美。"<br>"学生最重要的是学习。"<br>"穿那么好看给谁看？"</div>' +
+          '<p>你曾经因为穿了一件自己喜欢的衣服，被否定过。于是你学会了一件事：<strong>藏起来，是最安全的。</strong></p>'
+        },
+        { html: '<p>但我想告诉你一个真相：</p>' +
+          '<span class="insight">那些你以为会评价你的人，其实根本没那么多精力关注你。</span>' +
+          '<p>你今天穿了一件亮色的裙子出门，90% 的人根本不会注意到。那 10% 注意到的人，其中一半还会觉得"挺好看的"。</p>' +
+          '<p>所以你真正害怕的，不是别人的眼光。<br>是你自己心里那个<strong>"被否定的自己"</strong>。</p>'
+        }
+      ],
+      steps: [
+        '周五穿一件平时不敢穿的单品，只出门一小时',
+        '在家里试穿那件吊牌没拆的衣服，对着镜子看五分钟——不一定要穿出去，先让自己习惯'
+      ]
+    },
+    b: {
+      glyph: '🌀', tag: '类型二 · B区最多', title: '不确定自己喜欢什么型',
+      cls: 'result-type-b',
+      cards: [
+        { html: '<span class="insight">你不是审美不好，你是没有机会练习。</span>' +
+          '<p>很多人到了 30 岁，审美状态还停留在青春期。因为我们这一代人，在 12 到 18 岁最应该"乱穿衣服、疯狂尝试"的年纪，穿着统一的校服、剪着统一的发型。</p>'
+        },
+        { html: '<div class="dialogue">没有人问你："你今天想表达什么？"<br>没有人告诉你："你可以试试这个颜色。"<br>也没有人允许你："穿得奇怪一点也没关系。"</div>' +
+          '<p>到了大学、到了职场，突然所有人都期待你：<strong>"你应该知道自己适合什么。"</strong></p>' +
+          '<p>但你从来没有练习过。</p>'
+        },
+        { html: '<p>你的"风格混乱"——今天想穿甜妹，明天想穿御姐，后天又觉得舒服最重要——</p>' +
+          '<span class="insight">那不是问题。那叫"迟来的青春期"。</span>' +
+          '<p>那些看起来永远穿得很"对"的人，可能只是找到了一个"不会错"的壳。而你在混乱里，反而<strong>更接近真实的自己</strong>。</p>'
+        }
+      ],
+      steps: [
+        '每周选一天，只凭"我今天想穿什么颜色"来决定出门的衣服',
+        '把衣柜里的衣服按"我喜欢""我不确定""我其实不喜欢"分成三堆'
+      ]
+    },
+    c: {
+      glyph: '🕯', tag: '类型三 · C区最多', title: '在等"更好的自己"型',
+      cls: 'result-type-c',
+      cards: [
+        { html: '<p style="font-size:15px;color:#7B4FA0;font-weight:500;">先抱抱你。</p>' +
+          '<span class="insight">你衣柜里那些吊牌没拆的衣服，不是衣服。是你对自己说的——"我还不够好。"</span>' +
+          '<div class="dialogue">你说："等我瘦了再穿。"<br>你说："等我再漂亮一点。"<br>你说："等我更有钱。"</div>'
+        },
+        { html: '<p>我见过的很多女生，瘦了十斤之后，还是不会穿那件衣服。因为到那时候，她会说："等我再瘦五斤。"</p>' +
+          '<p>你不是在等一个数字。你是在等自己<strong>"配得上"</strong>。但这个"配得上"，永远不会来。因为它的底层逻辑是：<strong>现在的我，不值得被看见。</strong></p>'
+        },
+        { html: '<span class="insight">你不需要变得更好，才值得穿好看的衣服。</span>' +
+          '<p>衣服不是"奖励"。不是"变好了才能穿"的东西。衣服是你和这个世界说话的方式。你现在的样子，就值得被看见。</p>' +
+          '<div class="dialogue">不是先喜欢自己，才开始表达。<br>是先允许自己表达，才慢慢喜欢上那个正在表达的自己。</div>'
+        }
+      ],
+      steps: [
+        '把衣柜里那件吊牌没拆的衣服，挂到最外面——每天打开衣柜都能看到它',
+        '在某一天，在家里穿上它，对着镜子看五分钟。那个时刻，就是结果的开始'
+      ]
+    },
+    d: {
+      glyph: '🎨', tag: '类型四 · D区最多', title: '审美训练缺失型',
+      cls: 'result-type-d',
+      cards: [
+        { html: '<span class="insight">你不是没有天赋，你是没有被教过。</span>' +
+          '<p>从小到大，有没有人教过你：</p>' +
+          '<div class="dialogue">"为什么这件衣服的红色好看？"<br>"这条裤子的版型哪里不对？"<br>"这个面料和那个面料有什么区别？"</div>' +
+          '<p>没有。学校不教，家里不聊。</p>'
+        },
+        { html: '<p>我们被要求学数学、学语文、学英语，但从来没有人教过我们——<strong>如何做出一个审美决策。</strong></p>' +
+          '<p>所以你现在靠看博主学穿搭，买回来发现穿不出那个效果——</p>' +
+          '<span class="insight">不是你不聪明。博主教的是"搭配公式"，而你缺的是"审美判断力"。</span>' +
+          '<p>这就像没学过数学，直接给她一个公式让她套。题目一变，就懵了。</p>'
+        },
+        { html: '<p><strong>怎么补？不是去报一个几万块的穿搭课。</strong></p>' +
+          '<p>是从日常生活里，一点点训练你的眼睛。</p>' +
+          '<p>走在路上，看一个人穿得很好看，不要只想着"衣服哪里买的"，而是问自己：</p>' +
+          '<div class="dialogue">"她身上哪个颜色让我觉得舒服？"<br>"这件衣服的长度和她的身高有什么关系？"<br>"如果我穿类似的东西，哪里会不一样？"</div>'
+        }
+      ],
+      steps: [
+        '走在路上看到穿得好看的人，问自己：她身上哪个颜色让我觉得舒服？',
+        '每周做一次"穿搭拆解"——不是找答案，是带自己一起看、一起分析'
+      ]
+    }
+  };
+
+  function actionBox(steps) {
+    var h = '<div class="action-box rise rise-4">';
+    h += '<div class="action-label">第一步建议</div>';
+    steps.forEach(function(s, i) {
+      h += '<div class="action-step"><div class="action-num">' + (i+1) + '</div><div class="action-desc">' + s + '</div></div>';
+    });
+    h += '</div>';
+    return h;
+  }
+
+  function buildSingle(t, a, b, c, d) {
+    var r = R[t];
+    var h = '<div class="' + r.cls + '">';
+    h += '<div class="result-header">';
+    h += '<span class="result-glyph">' + r.glyph + '</span>';
+    h += '<div class="result-tag">' + r.tag + '</div>';
+    h += '<div class="result-title">' + r.title + '</div>';
+    h += bars(a, b, c, d);
+    h += '</div>';
+    h += '<div class="result-body">';
+    r.cards.forEach(function(card, i) {
+      h += '<div class="result-card rise rise-' + (i+1) + '">' + card.html + '</div>';
+    });
+    h += actionBox(r.steps);
+    h += closing();
+    h += '</div></div>';
+    return h;
+  }
+
+  function buildMix(dom, a, b, c, d) {
+    var lbl = { a: '害怕被评价型', b: '不确定喜好型', c: '等待更好自己型', d: '审美训练缺失型' };
+    var chipCls = { a: 'chip-a', b: 'chip-b', c: 'chip-c', d: 'chip-d' };
+    var h = '<div class="result-type-mix">';
+    h += '<div class="result-header">';
+    h += '<span class="result-glyph">🌈</span>';
+    h += '<div class="result-tag">复合类型</div>';
+    h += '<div class="result-title">你是混合型</div>';
+    h += bars(a, b, c, d);
+    h += '</div>';
+    h += '<div class="result-body">';
+    h += '<div class="result-card rise rise-1">';
+    h += '<p>你在多个区域都有较多选择，说明穿衣困扰不只来自一个方面——而这恰恰是最真实的。</p>';
+    h += '<div class="chips">';
+    dom.forEach(function(t) {
+      h += '<div class="chip ' + chipCls[t] + '">' + t.toUpperCase() + ' · ' + lbl[t] + '</div>';
+    });
+    h += '</div></div>';
+    dom.forEach(function(t, i) {
+      var r = R[t];
+      h += '<div class="section-label">' + r.tag + '</div>';
+      h += '<div class="result-card rise rise-' + (i+2) + '">';
+      h += '<p style="font-size:15px;font-weight:600;color:var(--deep);margin-bottom:12px;">' + r.glyph + ' ' + r.title + '</p>';
+      h += r.cards[0].html;
+      h += '<div class="action-box" style="margin-top:14px;"><div class="action-label">第一步建议</div>';
+      h += '<div class="action-step"><div class="action-num">1</div><div class="action-desc">' + r.steps[0] + '</div></div>';
+      h += '</div></div>';
+    });
+    h += closing();
+    h += '</div></div>';
+    return h;
+  }
+
+  function buildEmpty() {
+    return '<div class="result-type-mix">' +
+      '<div class="result-header">' +
+        '<span class="result-glyph">💭</span>' +
+        '<div class="result-tag">暂无选择</div>' +
+        '<div class="result-title">你还没有选择任何选项</div>' +
+      '</div>' +
+      '<div class="result-body">' +
+        '<div class="result-card rise rise-1"><p style="text-align:center;color:var(--text-hint);padding:8px 0;">返回上方，选择符合你的描述，即可获得专属分析 ✨</p></div>' +
+        '<button class="retry-btn" onclick="retry()">返回测试</button>' +
+      '</div>' +
+    '</div>';
+  }
+</script>
+</body>
+</html>
